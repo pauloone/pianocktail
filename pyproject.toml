@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pianocktail"
+version = "0.1.0"
+description = "A library for creating musical cocktails"
+authors = [
+    { name = "pauloone"}
+]
+license = { text = "MIT" }
+dependencies = [
+    "numpy",
+    "scipy",
+    "pandas"
+]
+
+[tool.setuptools]
+packages = ["pianocktail"]
