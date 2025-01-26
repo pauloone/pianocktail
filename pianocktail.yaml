@@ -1,0 +1,4 @@
+audio_location: audio_files
+sampling:
+  duration: 5
+  frequency_resolution: 20

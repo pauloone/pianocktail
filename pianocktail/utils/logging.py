@@ -5,6 +5,7 @@ from multiprocessing import Process, Queue, Event
 from multiprocessing.synchronize import Event as EventType
 from logging import Handler, LogRecord, root, basicConfig, DEBUG
 
+
 class MultiprocessHandler(Handler):
 
     def __init__(self, queue: Queue):
@@ -14,28 +15,30 @@ class MultiprocessHandler(Handler):
     def emit(self, record: LogRecord) -> None:
         self._queue.put(self.format(record))
 
-def handle_queue(queue: Queue, stop: EventType):
+
+def handle_queue(queue: Queue, stop: EventType, stopped_event: EventType):
     try:
         os.nice(20)
     except OSError:
         print("Unable to set process niceness")
-    while(True):
+    while not (stop.is_set() and queue.empty()):
         try:
-            record=queue.get(timeout=1)
-            sys.stdout.write(record + '\n')
+            record = queue.get(timeout=1E-3)
+            sys.stdout.write(record + "\n")
             while True:
-                sys.stdout.write(queue.get_nowait() + '\n')
+                sys.stdout.write(queue.get_nowait() + "\n")
         except Empty:
             pass
         sys.stdout.flush()
-        if stop.is_set():
-            return
+    stopped_event.set()
 
-def logger_config() -> EventType:
+
+def logger_config(level: int) -> tuple[EventType, EventType]:
     queue = Queue()
     stop_event = Event()
-    basicConfig(level=DEBUG, handlers=[MultiprocessHandler(queue)])
+    stopped_event = Event()
+    basicConfig(level=level, handlers=[MultiprocessHandler(queue)])
 
-    process = Process(target=handle_queue, args=(queue, stop_event))
+    process = Process(target=handle_queue, args=(queue, stop_event, stopped_event))
     process.start()
-    return stop_event
+    return stop_event, stopped_event

@@ -11,9 +11,22 @@ authors = [
 ]
 license = { text = "MIT" }
 dependencies = [
-    "numpy",
-    "scipy",
-    "pandas"
+    "torchaudio",
+    "torch",
+    "pyyaml",
+    "docopt",
+    "docopt-subcommands",
+    "matplotlib"
+]
+
+
+[project.scripts]
+pianocktail = "pianocktail.cli:cli"
+
+[project.optional-dependencies]
+contrib = [
+  "black",
+  "ipython",
 ]
 
 [tool.setuptools]
