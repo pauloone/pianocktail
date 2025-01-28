@@ -34,7 +34,7 @@ main_logger = logging.getLogger("pianocktail")
 @contextmanager
 def precommand_config(
     precommand_args: typing.Dict[str, typing.Any],
-) -> typing.Generator[tuple[Config, bool, torch.device]]:
+) -> typing.Generator[tuple[Config, bool, torch.device], None, None]:
     event, stopped_event = logger_config(logging.DEBUG if precommand_args["--verbose"] else logging.INFO)
     is_clocking = precommand_args["--clock"]
     if torch.cuda.is_available() and not precommand_args["--no-cuda"]:
@@ -53,7 +53,7 @@ def precommand_config(
 
 
 @contextmanager
-def clocking(is_clocking: bool) -> typing.Generator[None]:
+def clocking(is_clocking: bool) -> typing.Generator[None, None, None]:
     if is_clocking:
         main_logger.debug("Start clocking")
         start = time_ns()
@@ -93,16 +93,18 @@ def single(precommand_args: dict[str, typing.Any], args: dict[str, typing.Any]) 
         main_logger.info("Get peaks")
         with clocking(is_clocking):
             peaks = clip.peaks(0)
+        p_spectogram = clip.peaks_to_spectogram(peaks, spectogram.shape)
 
         clip.write_spectogram_to_audio(spectogram, f"raw_{args['<sound>']}")
         clip.write_spectogram_to_audio(filtered_spectogram, f"filtered_{args['<sound>']}")
+        clip.write_spectogram_to_audio(p_spectogram, f"peak_{args['<sound>']}")
 
         if args["--display"]:
 
             clip.plot_waveform(waveform, "Raw waveform")
             clip.plot_spectogram(spectogram, "Raw spectogram")
             clip.plot_spectogram(filtered_spectogram, "Filtered spectogram")
-            clip.plot_spectogram(peaks, "peaks")
+            clip.plot_spectogram(p_spectogram, "peaks")
             pyplot.show()
 
 

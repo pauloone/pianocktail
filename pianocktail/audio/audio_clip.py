@@ -1,6 +1,7 @@
 import logging
+import typing
 import os
-from functools import cached_property
+from functools import cached_property, lru_cache
 
 import torch
 import torch.nn.functional as ff
@@ -97,11 +98,21 @@ class AudioClip:
     def _frequency_to_bin(self, frequency: float) -> int:
         return int(frequency // self.config.sampling.frequency_resolution)
 
-    def peaks(self, start: float) -> torch.Tensor:
+    @lru_cache  # noqa: B019
+    def _bin_to_frequency(self, bin: int) -> float:
+        return bin * self.config.sampling.frequency_resolution
+
+    def peaks(self, start: float) -> list[dict[torch.Tensor, torch.Tensor]]:
         spectogram = self.filtered_spectogram(start)
         bins = [self._frequency_to_bin(f) for f in self.config.sampling.frequency_range]
-
-        return spectogram
+        self.logger.debug("Bins: %s", bins)
+        self.logger.debug("Spectogram shape: %s", spectogram.shape)
+        peaks: list[typing.Any] = [{} for _ in range(spectogram.shape[1])]
+        for i in range(0, len(bins) - 1):
+            result = torch.max(spectogram[bins[i] : bins[i + 1], :], dim=0)
+            for iter, (indice, value) in enumerate(zip(result.indices, result.values)):
+                peaks[iter][self._bin_to_frequency(bins[i] + indice)] = value
+        return peaks
 
     def plot_waveform(self, waveform: torch.Tensor, prefix: str = "Waveform") -> None:
         t_axis = torch.arange(0, waveform.shape[1]) / self.metadata.sample_rate
@@ -124,6 +135,14 @@ class AudioClip:
             extent=(0, duration, 0, self.freq_max),
         )
         figure.suptitle(name)
+
+    def peaks_to_spectogram(self, peaks: list[dict[torch.Tensor, torch.Tensor]], spectogram_shape: torch.Size) -> torch.Tensor:
+        spectogram = torch.zeros(*spectogram_shape)
+        for i, peak in enumerate(peaks):
+            for freq, value in peak.items():
+                bin = self._frequency_to_bin(freq)
+                spectogram[bin, i] = value
+        return spectogram
 
     def write_spectogram_to_audio(self, spectogram: torch.Tensor, filename: str) -> None:
         waveform = self.InverseSpectogram_opj(spectogram)

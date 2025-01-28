@@ -1,14 +1,14 @@
-import sys
 import os
-from queue import Empty
-from multiprocessing import Process, Queue, Event
-from multiprocessing.synchronize import Event as EventType
+import sys
 from logging import Handler, LogRecord, basicConfig
+from multiprocessing import Event, Process, Queue
+from multiprocessing.synchronize import Event as EventType
+from queue import Empty
 
 
 class MultiprocessHandler(Handler):
 
-    def __init__(self, queue: Queue[str]):
+    def __init__(self, queue: "Queue[str]") -> None:
         super().__init__()
         self._queue = queue
 
@@ -16,7 +16,7 @@ class MultiprocessHandler(Handler):
         self._queue.put(self.format(record))
 
 
-def handle_queue(queue: Queue[str], stop: EventType, stopped_event: EventType) -> None:
+def handle_queue(queue: "Queue[str]", stop: EventType, stopped_event: EventType) -> None:
     try:
         os.nice(20)
     except OSError:
@@ -34,7 +34,7 @@ def handle_queue(queue: Queue[str], stop: EventType, stopped_event: EventType) -
 
 
 def logger_config(level: int) -> tuple[EventType, EventType]:
-    queue: Queue[str] = Queue()
+    queue: "Queue[str]" = Queue()
     stop_event = Event()
     stopped_event = Event()
     basicConfig(level=level, handlers=[MultiprocessHandler(queue)])
