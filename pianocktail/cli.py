@@ -1,11 +1,15 @@
 import logging
-from time import time_ns,sleep
+from contextlib import contextmanager
+from time import sleep, time_ns
+
+import docopt_subcommands as dsc
+import torch
+import torch.cuda
+from matplotlib import pyplot
+
+from .audio.audio_clip import AudioClip
 from .config import load_config
 from .utils.logging import logger_config
-import docopt_subcommands as dsc
-from contextlib import contextmanager
-from matplotlib import pyplot
-from .audio.audio_clip import AudioClip
 
 DOC_TEMPLATE = """{program}
 
@@ -15,6 +19,7 @@ Options:
   -h --help     Show this screen.
   -v --verbose  Use verbose output
   -c --clock    Clock the program execution time
+  --no-cuda     Deactivate cuda
 
 Available commands:
   {available_commands}
@@ -24,19 +29,27 @@ See '{program} <command> -h' for help on specific commands.
 
 main_logger = logging.getLogger("pianocktail")
 
+
 @contextmanager
 def precommand_config(precommand_args):
-    event, stopped_event = logger_config(logging.DEBUG if precommand_args["--verbose"] else logging.INFO)
+    event, stopped_event = logger_config(
+        logging.DEBUG if precommand_args["--verbose"] else logging.INFO
+    )
     is_clocking = precommand_args["--clock"]
+    if torch.cuda.is_available() and not precommand_args["--no-cuda"]:
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
     try:
         with clocking(is_clocking):
             config = load_config()
             main_logger.debug(config)
-            yield config, precommand_args["--clock"]
+            yield config, precommand_args["--clock"], device
     finally:
-        sleep(1E-3)
+        sleep(1e-3)
         event.set()
         stopped_event.wait()
+
 
 @contextmanager
 def clocking(is_clocking):
@@ -45,7 +58,7 @@ def clocking(is_clocking):
         start = time_ns()
         yield
         stop = time_ns()
-        main_logger.info("Executed in %fs.", (stop -  start)/1E9)
+        main_logger.info("Executed in %fs.", (stop - start) / 1e9)
     else:
         yield
 
@@ -58,17 +71,40 @@ def single(precommand_args, args):
     Used for program teakwing.
 
     """
-    with precommand_config(precommand_args=precommand_args) as (config, is_clocking):
-        main_logger.info("analyse %s", args["<sound>"])
+    with precommand_config(precommand_args=precommand_args) as (
+        config,
+        is_clocking,
+        torch_device,
+    ):
+        main_logger.info("Extracting sample")
         with clocking(is_clocking):
-            clip = AudioClip( args["<sound>"], config)
+            clip = AudioClip(args["<sound>"], config, torch_device)
             waveform = clip.sample(0)
-        clip.plot_waveform(waveform, clip.metadata.sample_rate,  args["<sound>"])
-        pyplot.show()
+
+        main_logger.info("Extracting spectrogram")
         with clocking(is_clocking):
-            clip = AudioClip( args["<sound>"], config)
             spectogram = clip.spectogram(0)
-        clip.plot_spectogram(spectogram, config.sampling.frequency_resolution,  args["<sound>"])
+
+        main_logger.info("Filter spectrogram")
+        with clocking(is_clocking):
+            filtered_spectogram = clip.filtered_spectogram(0)
+
+        main_logger.info("Get peaks")
+        with clocking(is_clocking):
+            peaks, points = clip.peaks(0)
+
+        clip.plot_waveform(waveform, "Raw waveform")
+        clip.plot_spectogram(spectogram, "Raw spectogram")
+        clip.plot_spectogram(filtered_spectogram, "Filtered spectogram")
+        clip.plot_spectogram(peaks, "peaks")
+        clip.plot_spectogram(points, "points")
+        clip.write_spectogram_to_audio(spectogram, f"raw_{args['<sound>']}")
+        clip.write_spectogram_to_audio(
+            filtered_spectogram, f"filtered_{args['<sound>']}"
+        )
+
         pyplot.show()
+
+
 def cli():
     dsc.main(program="pianocktail", doc_template=DOC_TEMPLATE)

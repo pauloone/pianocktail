@@ -3,7 +3,7 @@ import os
 from queue import Empty
 from multiprocessing import Process, Queue, Event
 from multiprocessing.synchronize import Event as EventType
-from logging import Handler, LogRecord, root, basicConfig, DEBUG
+from logging import Handler, LogRecord, basicConfig
 
 
 class MultiprocessHandler(Handler):
@@ -23,7 +23,7 @@ def handle_queue(queue: Queue, stop: EventType, stopped_event: EventType):
         print("Unable to set process niceness")
     while not (stop.is_set() and queue.empty()):
         try:
-            record = queue.get(timeout=1E-3)
+            record = queue.get(timeout=1e-1)
             sys.stdout.write(record + "\n")
             while True:
                 sys.stdout.write(queue.get_nowait() + "\n")

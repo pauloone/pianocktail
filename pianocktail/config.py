@@ -6,6 +6,7 @@ import yaml
 class SamplingConfig:
     duration: float
     frequency_resolution: float
+    frequency_range: list[float]
 
 
 @dataclass(frozen=True)

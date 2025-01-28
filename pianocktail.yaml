@@ -1,4 +1,16 @@
 audio_location: audio_files
 sampling:
   duration: 5
-  frequency_resolution: 20
+  frequency_resolution: 5
+  frequency_range:
+    - 80
+    - 100
+    - 130
+    - 170
+    - 300
+    - 450
+    - 600
+    - 800
+    - 1000
+    - 2000
+    - 5000

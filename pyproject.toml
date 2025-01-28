@@ -24,10 +24,21 @@ dependencies = [
 pianocktail = "pianocktail.cli:cli"
 
 [project.optional-dependencies]
+
+test = [
+  "flake8",
+  "ipython",
+  "flake8-bugbear"
+]
+
 contrib = [
+  "pianocktail[test]", 
   "black",
   "ipython",
 ]
 
 [tool.setuptools]
 packages = ["pianocktail"]
+
+[tool.black]
+line-length = 180
