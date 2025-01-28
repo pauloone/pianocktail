@@ -28,7 +28,8 @@ pianocktail = "pianocktail.cli:cli"
 test = [
   "flake8",
   "ipython",
-  "flake8-bugbear"
+  "flake8-bugbear",
+  "mypy"
 ]
 
 contrib = [

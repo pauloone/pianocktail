@@ -15,7 +15,7 @@ class Config:
     sampling: SamplingConfig
 
 
-def load_config(path: str = "pianocktail.yaml"):
+def load_config(path: str = "pianocktail.yaml") -> Config:
     with open(path, "r") as f:
         data = yaml.safe_load(f)
         data["sampling"] = SamplingConfig(**data["sampling"])

@@ -1,14 +1,15 @@
 import logging
+import typing
 from contextlib import contextmanager
 from time import sleep, time_ns
 
-import docopt_subcommands as dsc
+import docopt_subcommands as dsc  # type: ignore
 import torch
 import torch.cuda
 from matplotlib import pyplot
 
 from .audio.audio_clip import AudioClip
-from .config import load_config
+from .config import Config, load_config
 from .utils.logging import logger_config
 
 DOC_TEMPLATE = """{program}
@@ -31,10 +32,10 @@ main_logger = logging.getLogger("pianocktail")
 
 
 @contextmanager
-def precommand_config(precommand_args):
-    event, stopped_event = logger_config(
-        logging.DEBUG if precommand_args["--verbose"] else logging.INFO
-    )
+def precommand_config(
+    precommand_args: typing.Dict[str, typing.Any],
+) -> typing.Generator[tuple[Config, bool, torch.device]]:
+    event, stopped_event = logger_config(logging.DEBUG if precommand_args["--verbose"] else logging.INFO)
     is_clocking = precommand_args["--clock"]
     if torch.cuda.is_available() and not precommand_args["--no-cuda"]:
         device = torch.device("cuda")
@@ -52,7 +53,7 @@ def precommand_config(precommand_args):
 
 
 @contextmanager
-def clocking(is_clocking):
+def clocking(is_clocking: bool) -> typing.Generator[None]:
     if is_clocking:
         main_logger.debug("Start clocking")
         start = time_ns()
@@ -63,9 +64,9 @@ def clocking(is_clocking):
         yield
 
 
-@dsc.command()
-def single(precommand_args, args):
-    """usage: {program} single <sound>
+@dsc.command()  # type: ignore
+def single(precommand_args: dict[str, typing.Any], args: dict[str, typing.Any]) -> None:
+    """usage: {program} single <sound> [--display]
 
     Analysis of a single sample.
     Used for program teakwing.
@@ -91,20 +92,19 @@ def single(precommand_args, args):
 
         main_logger.info("Get peaks")
         with clocking(is_clocking):
-            peaks, points = clip.peaks(0)
+            peaks = clip.peaks(0)
 
-        clip.plot_waveform(waveform, "Raw waveform")
-        clip.plot_spectogram(spectogram, "Raw spectogram")
-        clip.plot_spectogram(filtered_spectogram, "Filtered spectogram")
-        clip.plot_spectogram(peaks, "peaks")
-        clip.plot_spectogram(points, "points")
         clip.write_spectogram_to_audio(spectogram, f"raw_{args['<sound>']}")
-        clip.write_spectogram_to_audio(
-            filtered_spectogram, f"filtered_{args['<sound>']}"
-        )
+        clip.write_spectogram_to_audio(filtered_spectogram, f"filtered_{args['<sound>']}")
 
-        pyplot.show()
+        if args["--display"]:
+
+            clip.plot_waveform(waveform, "Raw waveform")
+            clip.plot_spectogram(spectogram, "Raw spectogram")
+            clip.plot_spectogram(filtered_spectogram, "Filtered spectogram")
+            clip.plot_spectogram(peaks, "peaks")
+            pyplot.show()
 
 
-def cli():
+def cli() -> None:
     dsc.main(program="pianocktail", doc_template=DOC_TEMPLATE)

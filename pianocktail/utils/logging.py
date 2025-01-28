@@ -8,7 +8,7 @@ from logging import Handler, LogRecord, basicConfig
 
 class MultiprocessHandler(Handler):
 
-    def __init__(self, queue: Queue):
+    def __init__(self, queue: Queue[str]):
         super().__init__()
         self._queue = queue
 
@@ -16,7 +16,7 @@ class MultiprocessHandler(Handler):
         self._queue.put(self.format(record))
 
 
-def handle_queue(queue: Queue, stop: EventType, stopped_event: EventType):
+def handle_queue(queue: Queue[str], stop: EventType, stopped_event: EventType) -> None:
     try:
         os.nice(20)
     except OSError:
@@ -34,7 +34,7 @@ def handle_queue(queue: Queue, stop: EventType, stopped_event: EventType):
 
 
 def logger_config(level: int) -> tuple[EventType, EventType]:
-    queue = Queue()
+    queue: Queue[str] = Queue()
     stop_event = Event()
     stopped_event = Event()
     basicConfig(level=level, handlers=[MultiprocessHandler(queue)])
