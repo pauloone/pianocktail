@@ -1,0 +1,253 @@
+songs:
+  motorhead:
+    general:
+      rhum: 3
+      tomato_juice: 3
+    song:
+      ace_of_spades:
+      - scotch: 7
+        red_bull: 6
+  ac/dc:
+    general:
+      - bourbon: 2
+        red_bull: 2
+        vodka: 12
+  tom waits:
+    songs:
+      mule variations:
+        - jim and ginger
+  eels:
+    songs:
+      Blinking Lights and Other Revelations:
+        - tom collins
+  neil young:
+    songs:
+      in concert:
+        - whiskey: 6
+  daft_punk:
+    songs:
+      contact:
+        - red_bull: 3
+        - gin: 3
+  Camila Cabello:
+    songs:
+      havana:
+        - hemingway daiquiria
+  james taylor:
+    songs:
+      mexico:
+        - paloma
+  will smith:
+    songs:
+      miami:
+        - mojito
+        - virgin mojito
+  billy joel:
+    songs:
+      New York State of Mind:
+        - new york sour
+  queen:
+    songs:
+      barcelona:
+        - gin & tonic
+  toto:
+    songs:
+      africa:
+        - Sundowner
+  
+
+
+genre:
+  country:
+    - old fashioned
+  Reggaeton:
+    - spicy margarita
+  rock:
+    - mojito
+    - virgin mojito
+    - Whiskey Sour 
+  bossa nova:
+    - martini
+  Indie Pop:
+    - Aperol Spritz
+  deep house:
+    - moskow mule
+    - virgin moskow mule
+  blues:
+    - negroni
+  alernative R&B:
+    - mimosa
+  Folk:
+    - sazerac
+  jazz:
+    - gin fizz
+  heavy metal:
+    - old fashioned
+  death metal:
+    - margarita
+  black metal:
+    - gimlet
+  Grindcore:
+    - moskow mule
+    - virgin moskow mule
+  doom metal:
+    - vodka: 6
+      lemmon juice: 0.5
+  sludge metal:
+    - bourbon: 6
+      brown sugar: 1
+      angostrua bitters: 1
+      lime: 0.5
+      cherry: 2
+      mint: 5
+      soda water: 4
+
+named_cocktail:
+  jim and ginger:
+    - bourbon: 1
+      ginger ale: 6
+  tom collins:
+    - gin: 2
+      sugar syrup: 1
+      lemmon juice: 3/4
+      soda water: 5
+  old fashioned:
+    - angostura bitters: 1
+      whiskey: 5
+      orange: 1
+      sugar_cube: 1
+  spicy margarita:
+    - tequila: 5
+      sugar syrup: 1
+      lemmon juice: 3
+      tabasco: 2
+  mojito:
+    - rhum: 4
+      mint: 8
+      sugar syrup: 2
+      sparkling water: 5
+      lime: 0.5
+  martini:
+    - gin: 6
+      vermouth: 1
+  Aperol Spritz:
+    - Aperol: 6
+      sparkling water: 3
+      prosecco: 9
+    - orange: 1
+  moscow mule:
+    - vodka: 4
+      ginger ale: 12
+      lemmon juice: 1
+  Whiskey Sour:
+    - whiskey: 5
+      sugar sugar syrup: 2 
+      lime: 1
+      egg white: 1
+  negroni:
+    - ice: 4
+    -  gin: 30
+      vermouth: 30
+      campari: 30
+      orange: 0.5
+  sazerac:
+    - absinthe: 1.5
+      whiskey: 5
+      sugar syrup: 1
+      bitter: 1
+      lemon zest: 1
+  Hemingway Daiquiri:
+    - rhum: 6
+      lime juice: 1.5
+      grapefruit juice: 1.5
+      maraschino: 1
+      sugar syrup: 0.5
+  paloma:
+    - tequila: 6
+      grapefruit juice: 3
+      lime juice: 1.5
+  new york sour:
+    - bourbon: 6
+      lemon juice: 3
+      sugar syrup: 1
+      water: 1
+      egg white: 1
+      red wine: 1.5
+  gin & tonic:
+    - gin: 5
+      tonic: 12
+      lime: 1
+  Sundowner:
+    - lime juice: 3
+      tonic: 12
+      expresso: 4
+  gin fizz:
+    - gin: 6
+      sugar syrup: 2
+      lemmon juice: 2
+      soda water: 6
+      egg white: 1
+  virgin moskow mule:
+    - ginger ale: 12
+      lemmon juice: 1 
+      mint: 4
+      soda water: 4
+      sugar syrup: 1
+  virgin mojito:
+    - mint: 5
+      sparkling water: 8
+      ice: 4
+      lime: 0.5
+  gimlet:
+    - gin: 8
+      lime juice: 2
+      lemon zest: 1
+  
+
+ingredients:
+  liquid:
+    cl:
+      - gin
+      - vodka
+      - rum
+      - whiskey
+      - tequila
+      - bourbon
+      - scotch
+      - red_bull
+      - ginger ale
+      - sugar syrup
+      - lemmon juice
+      - soda water
+      - water
+      - tomato juice
+      - vermouth
+      - sparkling water
+      - prosecco
+      - Aperol
+      - lime juice
+      - bitter
+      - expresso
+      - grapefruit juice
+      - tonic
+      - red wine
+    drop:
+      - tabasco
+  solid:
+    cube:
+      - sugar_cube
+    no_unit:
+      - ice
+      - lime
+      - egg white
+      - lemon zest
+      - angostura bitters
+      - cherry
+    leaf:
+      - mint
+    slice:
+      - orange
+    spoon:
+      - sugar
+      - brown sugar
+     
