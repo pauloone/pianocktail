@@ -14,3 +14,8 @@ class Artist(BaseModel):
 
     def __repr__(self):
         return f"<Artist: {self.name} >"
+
+
+# We explicitely import the through model for the autodiscovery of models.
+_artist_genre = Artist.genres.get_through_model()
+_artist_cocktail = Artist.cocktail.get_through_model()

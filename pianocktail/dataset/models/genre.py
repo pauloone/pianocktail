@@ -12,3 +12,7 @@ class Genre(BaseModel):
 
     def __repr__(self):
         return f"<Genre: {self.name} >"
+
+
+# We explicitely import the through model for the autodiscovery of models.
+_genre_cocktail = Genre.cocktails.get_through_model()

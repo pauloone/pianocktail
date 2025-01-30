@@ -14,3 +14,7 @@ class Song(BaseModel):
 
     def __repr__(self):
         return f"<Song:id={self.id},name={self.name},artist={self.artist})>"
+
+
+# We explicitely import the through model for the autodiscovery of models.
+_song_cocktail = Song.cocktails.get_through_model()

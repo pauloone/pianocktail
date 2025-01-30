@@ -18,7 +18,8 @@ dependencies = [
     "docopt-subcommands",
     "matplotlib",
     "peewee",
-    "peewee-migrate"
+    "peewee-migrate",
+    "pyyaml",
 ]
 
 

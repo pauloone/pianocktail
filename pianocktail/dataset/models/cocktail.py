@@ -3,7 +3,7 @@ from .base import BaseModel
 
 
 class Unit(BaseModel):
-    name = CharField(10, unique=True)
+    name = CharField(10, unique=True, index=True)
 
     def __str__(self):
         return f"{self.name}"
@@ -13,7 +13,7 @@ class Unit(BaseModel):
 
 
 class Ingredient(BaseModel):
-    name = CharField(50, unique=True)
+    name = CharField(50, unique=True, index=True)
     unit = ForeignKeyField(Unit, backref="ingredients")
 
     def __str__(self):
@@ -35,8 +35,8 @@ class Cocktail(BaseModel):
 
 
 class IngredientLine(BaseModel):
-    ingredient = ForeignKeyField(Ingredient)
-    cocktail = ForeignKeyField(Cocktail)
+    ingredient = ForeignKeyField(Ingredient, index=True)
+    cocktail = ForeignKeyField(Cocktail, index=True)
     quantity = IntegerField()
 
 
