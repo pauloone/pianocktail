@@ -16,7 +16,9 @@ dependencies = [
     "pyyaml",
     "docopt",
     "docopt-subcommands",
-    "matplotlib"
+    "matplotlib",
+    "peewee",
+    "peewee-migrate"
 ]
 
 
@@ -29,13 +31,14 @@ test = [
   "flake8",
   "ipython",
   "flake8-bugbear",
-  "mypy"
+  "mypy",
+  "types-peewee"
 ]
 
 contrib = [
   "pianocktail[test]", 
   "black",
-  "ipython",
+  "ipython"
 ]
 
 [tool.setuptools]

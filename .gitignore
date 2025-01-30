@@ -3,3 +3,4 @@
 *.pyc
 !.gitignore
 *.wav
+*.db
