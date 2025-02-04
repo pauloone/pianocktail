@@ -7,7 +7,7 @@ from .cocktail import Cocktail
 class Artist(BaseModel):
     name = CharField()
     genres = ManyToManyField(Genre, backref="artists")
-    cocktail = ManyToManyField(Cocktail, backref="artists")
+    cocktails = ManyToManyField(Cocktail, backref="artists")
 
     def __str__(self):
         return f"{self.name}"
@@ -18,4 +18,4 @@ class Artist(BaseModel):
 
 # We explicitely import the through model for the autodiscovery of models.
 _artist_genre = Artist.genres.get_through_model()
-_artist_cocktail = Artist.cocktail.get_through_model()
+_artist_cocktail = Artist.cocktails.get_through_model()

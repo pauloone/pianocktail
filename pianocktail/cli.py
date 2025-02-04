@@ -15,6 +15,7 @@ from .audio.audio_clip import AudioClip
 from .config import Config, load_config
 from .dataset import models
 from .utils.logging import logger_config
+from .dataset.raw_dataset import load_dataset
 
 DOC_TEMPLATE = """{program}
 
@@ -125,10 +126,29 @@ def process_raw_dataset(precommand_args: dict[str, typing.Any], args: dict[str, 
 
     Process the raw dataset configuration.
 
+    options:
+        --path=<path>  Path to the dataset configuration [default: raw_dataset.yaml]
 
     """
-    with precommand_config(precommand_args=precommand_args):
-        main_logger.info("Nothing for now")
+    with precommand_config(precommand_args=precommand_args) as precommand:
+        load_dataset(args["--path"], precommand.database)
+
+
+@dsc.command()  # type: ignore
+def process_download(precommand_args: dict[str, typing.Any]) -> None:
+    """usage: {program} raw_dataset [--path=<path>]
+
+    Process the raw dataset configuration.
+
+    options:
+        --path=<path>  Path to the dataset configuration [default: raw_dataset.yaml]
+
+    """
+    with precommand_config(precommand_args=precommand_args) as precommand:
+        from pianocktail.downloader import Downloader
+
+        downloader = Downloader(precommand.config)
+        downloader.download()
 
 
 @dsc.command()  # type: ignore

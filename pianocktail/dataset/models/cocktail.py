@@ -1,4 +1,4 @@
-from peewee import CharField, ForeignKeyField, IntegerField, ManyToManyField
+from peewee import CharField, ForeignKeyField, IntegerField, ManyToManyField, DeferredThroughModel
 from .base import BaseModel
 
 
@@ -23,9 +23,12 @@ class Ingredient(BaseModel):
         return f"<Ingredient: {self.name} >"
 
 
+IngredientLineThroughDeferred = DeferredThroughModel()
+
+
 class Cocktail(BaseModel):
     name = CharField(100, null=True)
-    ingredient_line: ManyToManyField
+    ingredients: ManyToManyField = ManyToManyField(Ingredient, through_model=IngredientLineThroughDeferred)
 
     def __str__(self):
         return f"{self.name}"
@@ -40,4 +43,4 @@ class IngredientLine(BaseModel):
     quantity = IntegerField()
 
 
-Cocktail.ingredient_line = ManyToManyField(Ingredient, through_model=IngredientLine, backref="cocktails")
+IngredientLineThroughDeferred.set_model(IngredientLine)

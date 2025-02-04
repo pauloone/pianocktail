@@ -5,7 +5,7 @@ from .cocktail import Cocktail
 
 
 class Song(BaseModel):
-    name = CharField(100)
+    name = CharField(100, unique=True)
     artist = ForeignKeyField(Artist, backref="songs")
     cocktails = ManyToManyField(Cocktail, backref="songs")
 
